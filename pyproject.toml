@@ -7,12 +7,33 @@ name = "perses-api-sdk"
 version = "0.1.0"
 description = "A Python SDK for the Perses API"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
+authors = [
+    { name = "Pascal Zimmermann" },
+]
+keywords = ["perses", "api", "sdk", "dashboard", "observability", "monitoring"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Monitoring",
+    "Typing :: Typed",
+]
 dependencies = [
     "httpx>=0.24.0",
     "pydantic>=2.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/ZPascal/perses_api_sdk"
+Repository = "https://github.com/ZPascal/perses_api_sdk"
+"Bug Tracker" = "https://github.com/ZPascal/perses_api_sdk/issues"
 
 [project.optional-dependencies]
 http2 = ["httpx[http2]"]
