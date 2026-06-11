@@ -7,6 +7,7 @@ from perses_api import (
     ProjectRole,
     User,
     Plugin,
+    Migrate,
 )
 from perses_api.model import (
     Metadata,
@@ -267,3 +268,133 @@ def test_get_plugins(perses_client):
     client = Plugin(perses_client)
     result = client.get_plugins()
     assert isinstance(result, list)
+
+
+_GRAFANA_DASHBOARD = {
+    "title": "Node Exporter",
+    "uid": "ne-001",
+    "time": {"from": "now-1h", "to": "now"},
+    "refresh": "30s",
+    "templating": {
+        "list": [
+            {
+                "name": "job",
+                "type": "constant",
+                "current": {"value": "node"},
+                "label": "Job",
+            }
+        ]
+    },
+    "panels": [
+        {
+            "id": 1,
+            "title": "CPU Usage",
+            "type": "timeseries",
+            "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+            "targets": [
+                {
+                    "expr": 'rate(node_cpu_seconds_total{job="$job"}[5m])',
+                    "legendFormat": "{{cpu}}",
+                }
+            ],
+        }
+    ],
+}
+
+
+def test_migrate_returns_perses_dashboard(perses_client):
+    client = Migrate(perses_client)
+    result = client.migrate(grafana_dashboard=_GRAFANA_DASHBOARD)
+
+    assert result["kind"] == "Dashboard"
+    assert result["spec"]["display"]["name"] == "Node Exporter"
+
+
+def test_migrate_preserves_uid_as_name(perses_client):
+    client = Migrate(perses_client)
+    result = client.migrate(grafana_dashboard=_GRAFANA_DASHBOARD)
+
+    assert result["metadata"]["name"] == "ne-001"
+
+
+def test_migrate_converts_variables(perses_client):
+    client = Migrate(perses_client)
+    result = client.migrate(grafana_dashboard=_GRAFANA_DASHBOARD)
+
+    variables = result["spec"]["variables"]
+    assert isinstance(variables, list)
+    assert len(variables) == 1
+    var = variables[0]
+    assert var["kind"] == "TextVariable"
+    assert var["spec"]["name"] == "job"
+    assert var["spec"]["constant"] is True
+
+
+def test_migrate_converts_panels(perses_client):
+    client = Migrate(perses_client)
+    result = client.migrate(grafana_dashboard=_GRAFANA_DASHBOARD)
+
+    panels = result["spec"]["panels"]
+    assert isinstance(panels, dict)
+    assert len(panels) >= 1
+    panel = next(iter(panels.values()))
+    assert panel["kind"] == "Panel"
+    assert panel["spec"]["display"]["name"] == "CPU Usage"
+
+
+def test_migrate_with_input(perses_client):
+    client = Migrate(perses_client)
+    result = client.migrate(
+        grafana_dashboard=_GRAFANA_DASHBOARD,
+        migration_input={"datasource": "prometheus"},
+    )
+
+    # Input is accepted; result is still a valid Perses dashboard
+    assert result["kind"] == "Dashboard"
+
+
+def test_migrate_result_can_be_saved_as_dashboard(perses_client):
+    project_client = Project(perses_client)
+    project_name = unique("sdk-migrate-proj")
+    project_client.create_project(
+        ProjectModel(metadata=Metadata(name=project_name), spec=ProjectSpec())
+    )
+
+    # Use a dashboard without variables so the migrated result passes Perses validation
+    grafana = {
+        "title": "Node Exporter",
+        "time": {"from": "now-1h", "to": "now"},
+        "panels": [
+            {
+                "id": 1,
+                "title": "CPU Usage",
+                "type": "timeseries",
+                "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+                "targets": [{"expr": "rate(node_cpu_seconds_total[5m])"}],
+            }
+        ],
+    }
+    migrate_client = Migrate(perses_client)
+    migrated = migrate_client.migrate(grafana_dashboard=grafana)
+
+    spec = migrated["spec"]
+    dash_name = unique("sdk-migrated-dash")
+    dash_client = Dashboard(perses_client)
+    saved = dash_client.create_dashboard(
+        project_name,
+        DashboardModel(
+            metadata=Metadata(name=dash_name, project=project_name),
+            spec=DashboardSpec(
+                display=spec.get("display"),
+                variables=spec.get("variables"),
+                panels=spec.get("panels"),
+                layouts=spec.get("layouts"),
+                duration=spec.get("duration"),
+                refresh_interval=spec.get("refreshInterval"),
+            ),
+        ),
+    )
+    assert saved["metadata"]["name"] == dash_name
+
+    dash_client.delete_dashboard(project_name, dash_name)
+    project_client.delete_project(project_name)

@@ -1,7 +1,19 @@
-.PHONY: test integration-up integration-down integration integration-logs
+.PHONY: lint fmt fmt-check test integration-up integration-down integration integration-logs docs
+
+lint:
+	uv tool run ruff check .
+
+fmt:
+	uv tool run ruff format .
+
+fmt-check:
+	uv tool run ruff format --check .
 
 test:
 	uv run pytest tests/unit/ -v
+
+docs:
+	uv run sphinx-build -W -b html docs docs/_build/html
 
 integration-up:
 	docker compose up -d --wait
