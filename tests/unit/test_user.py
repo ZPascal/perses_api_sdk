@@ -29,7 +29,7 @@ def test_get_users(httpx_mock, model, user_payload):
 def test_get_users_filtered(httpx_mock, model, user_payload):
     httpx_mock.add_response(json=[user_payload])
     client = User(model)
-    result = client.get_users(name="ali")
+    client.get_users(name="ali")
     request = httpx_mock.get_requests()[0]
     assert "name=ali" in str(request.url)
 

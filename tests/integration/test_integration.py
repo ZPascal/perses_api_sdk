@@ -1,13 +1,10 @@
 import uuid
-import pytest
 from perses_api import (
-    APIModel,
     Project,
     Dashboard,
     ProjectDatasource,
     ProjectVariable,
     ProjectRole,
-    ProjectRoleBinding,
     User,
     Plugin,
 )
@@ -24,9 +21,6 @@ from perses_api.model import (
     RoleSpec,
     Permission,
     Role as RoleModel,
-    RoleBindingSpec,
-    Subject,
-    RoleBinding as RoleBindingModel,
     UserSpec,
     User as UserModel,
 )
@@ -34,6 +28,11 @@ from perses_api.model import (
 
 def unique(prefix: str) -> str:
     return f"{prefix}-{uuid.uuid4().hex[:8]}"
+
+
+def unique_id(prefix: str) -> str:
+    """Like unique() but uses underscores — required for resource names that forbid hyphens (e.g. variables)."""
+    return f"{prefix}_{uuid.uuid4().hex[:8]}"
 
 
 def test_project_crud(perses_client):
@@ -53,7 +52,10 @@ def test_project_crud(perses_client):
     assert name in names
 
     updated = client.update_project(
-        name, ProjectModel(metadata=Metadata(name=name), spec=ProjectSpec(display={"name": "Updated"}))
+        name,
+        ProjectModel(
+            metadata=Metadata(name=name), spec=ProjectSpec(display={"name": "Updated"})
+        ),
     )
     assert updated["metadata"]["name"] == name
 
@@ -75,7 +77,10 @@ def test_dashboard_crud(perses_client):
 
     created = client.create_dashboard(
         project_name,
-        DashboardModel(metadata=Metadata(name=dash_name, project=project_name), spec=DashboardSpec()),
+        DashboardModel(
+            metadata=Metadata(name=dash_name, project=project_name),
+            spec=DashboardSpec(),
+        ),
     )
     assert created["metadata"]["name"] == dash_name
 
@@ -88,7 +93,10 @@ def test_dashboard_crud(perses_client):
     updated = client.update_dashboard(
         project_name,
         dash_name,
-        DashboardModel(metadata=Metadata(name=dash_name, project=project_name), spec=DashboardSpec(duration="5m")),
+        DashboardModel(
+            metadata=Metadata(name=dash_name, project=project_name),
+            spec=DashboardSpec(duration="5m"),
+        ),
     )
     assert updated["metadata"]["name"] == dash_name
 
@@ -105,7 +113,10 @@ def test_datasource_crud(perses_client):
 
     client = ProjectDatasource(perses_client, project_name)
     ds_name = unique("sdk-ds")
-    plugin = {"kind": "PrometheusPlugin", "spec": {"directUrl": "http://prometheus:9090"}}
+    plugin = {
+        "kind": "PrometheusDatasource",
+        "spec": {"directUrl": "http://prometheus:9090"},
+    }
 
     created = client.create_datasource(
         DatasourceModel(
@@ -142,12 +153,14 @@ def test_variable_crud(perses_client):
     )
 
     client = ProjectVariable(perses_client, project_name)
-    var_name = unique("sdk-var")
+    var_name = unique_id("sdk_var")
 
     created = client.create_variable(
         VariableModel(
             metadata=Metadata(name=var_name, project=project_name),
-            spec=VariableSpec(kind="StaticListVariable", spec={"values": ["a", "b"]}),
+            spec=VariableSpec(
+                kind="TextVariable", spec={"value": "hello", "constant": False}
+            ),
         )
     )
     assert created["metadata"]["name"] == var_name
@@ -162,7 +175,9 @@ def test_variable_crud(perses_client):
         var_name,
         VariableModel(
             metadata=Metadata(name=var_name, project=project_name),
-            spec=VariableSpec(kind="StaticListVariable", spec={"values": ["a", "b", "c"]}),
+            spec=VariableSpec(
+                kind="TextVariable", spec={"value": "world", "constant": False}
+            ),
         ),
     )
     assert updated["metadata"]["name"] == var_name
@@ -184,7 +199,9 @@ def test_role_crud(perses_client):
     created = client.create_role(
         RoleModel(
             metadata=Metadata(name=role_name, project=project_name),
-            spec=RoleSpec(permissions=[Permission(actions=["read"], scopes=["Dashboard"])]),
+            spec=RoleSpec(
+                permissions=[Permission(actions=["read"], scopes=["Dashboard"])]
+            ),
         )
     )
     assert created["metadata"]["name"] == role_name
@@ -199,7 +216,11 @@ def test_role_crud(perses_client):
         role_name,
         RoleModel(
             metadata=Metadata(name=role_name, project=project_name),
-            spec=RoleSpec(permissions=[Permission(actions=["read", "write"], scopes=["Dashboard"])]),
+            spec=RoleSpec(
+                permissions=[
+                    Permission(actions=["read", "create"], scopes=["Dashboard"])
+                ]
+            ),
         ),
     )
     assert updated["metadata"]["name"] == role_name
@@ -215,7 +236,11 @@ def test_user_crud(perses_client):
     created = client.create_user(
         UserModel(
             metadata=Metadata(name=username),
-            spec=UserSpec(first_name="Test", last_name="User", native_provider={"password": "test123!"}),
+            spec=UserSpec(
+                first_name="Test",
+                last_name="User",
+                native_provider={"password": "test123!"},
+            ),
         )
     )
     assert created["metadata"]["name"] == username

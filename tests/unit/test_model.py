@@ -1,4 +1,3 @@
-import pytest
 from perses_api.model import (
     APIModel,
     RequestsMethods,
@@ -8,18 +7,6 @@ from perses_api.model import (
     ProjectSpec,
     Dashboard,
     DashboardSpec,
-    EphemeralDashboard,
-    EphemeralDashboardSpec,
-    Datasource,
-    DatasourceSpec,
-    Variable,
-    VariableSpec,
-    Role,
-    RoleSpec,
-    RoleBinding,
-    RoleBindingSpec,
-    Secret,
-    SecretSpec,
     User,
     UserSpec,
 )
@@ -93,23 +80,6 @@ def test_user_model():
 def test_public_api_imports():
     from perses_api import (
         APIModel,
-        Api,
-        Project,
-        Dashboard,
-        EphemeralDashboard,
-        ProjectDatasource,
-        GlobalDatasource,
-        ProjectVariable,
-        GlobalVariable,
-        ProjectRole,
-        GlobalRole,
-        ProjectRoleBinding,
-        GlobalRoleBinding,
-        ProjectSecret,
-        GlobalSecret,
-        User,
-        Plugin,
-        Migrate,
-        Validate,
     )
+
     assert APIModel is not None

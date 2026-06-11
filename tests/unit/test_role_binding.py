@@ -47,7 +47,9 @@ def test_create_project_role_binding(httpx_mock, model, rb_payload):
     client = ProjectRoleBinding(model, "my-project")
     body = RoleBindingModel(
         metadata=Metadata(name="rb-1", project="my-project"),
-        spec=RoleBindingSpec(role="editor", subjects=[Subject(kind="User", name="alice")]),
+        spec=RoleBindingSpec(
+            role="editor", subjects=[Subject(kind="User", name="alice")]
+        ),
     )
     result = client.create_role_binding(body)
     assert result["metadata"]["name"] == "rb-1"
@@ -58,7 +60,9 @@ def test_update_project_role_binding(httpx_mock, model, rb_payload):
     client = ProjectRoleBinding(model, "my-project")
     body = RoleBindingModel(
         metadata=Metadata(name="rb-1", project="my-project"),
-        spec=RoleBindingSpec(role="editor", subjects=[Subject(kind="User", name="alice")]),
+        spec=RoleBindingSpec(
+            role="editor", subjects=[Subject(kind="User", name="alice")]
+        ),
     )
     result = client.update_role_binding("rb-1", body)
     assert result["metadata"]["name"] == "rb-1"

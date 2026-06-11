@@ -11,7 +11,11 @@ def model():
 
 @pytest.fixture
 def dashboard_payload():
-    return {"kind": "Dashboard", "metadata": {"name": "my-dash", "project": "my-project"}, "spec": {}}
+    return {
+        "kind": "Dashboard",
+        "metadata": {"name": "my-dash", "project": "my-project"},
+        "spec": {},
+    }
 
 
 def test_get_dashboards(httpx_mock, model, dashboard_payload):
@@ -25,7 +29,7 @@ def test_get_dashboards(httpx_mock, model, dashboard_payload):
 def test_get_dashboards_filtered(httpx_mock, model, dashboard_payload):
     httpx_mock.add_response(json=[dashboard_payload])
     client = Dashboard(model)
-    result = client.get_dashboards("my-project", name="my")
+    client.get_dashboards("my-project", name="my")
     request = httpx_mock.get_requests()[0]
     assert "name=my" in str(request.url)
 
@@ -48,7 +52,9 @@ def test_get_dashboard_empty_args_raises(model):
 def test_create_dashboard(httpx_mock, model, dashboard_payload):
     httpx_mock.add_response(json=dashboard_payload)
     client = Dashboard(model)
-    body = DashboardModel(metadata=Metadata(name="my-dash", project="my-project"), spec=DashboardSpec())
+    body = DashboardModel(
+        metadata=Metadata(name="my-dash", project="my-project"), spec=DashboardSpec()
+    )
     result = client.create_dashboard("my-project", body)
     assert result["kind"] == "Dashboard"
 
@@ -56,7 +62,9 @@ def test_create_dashboard(httpx_mock, model, dashboard_payload):
 def test_update_dashboard(httpx_mock, model, dashboard_payload):
     httpx_mock.add_response(json=dashboard_payload)
     client = Dashboard(model)
-    body = DashboardModel(metadata=Metadata(name="my-dash", project="my-project"), spec=DashboardSpec())
+    body = DashboardModel(
+        metadata=Metadata(name="my-dash", project="my-project"), spec=DashboardSpec()
+    )
     result = client.update_dashboard("my-project", "my-dash", body)
     assert result["metadata"]["name"] == "my-dash"
 

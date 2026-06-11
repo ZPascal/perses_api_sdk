@@ -14,7 +14,9 @@ def role_payload():
     return {
         "kind": "Role",
         "metadata": {"name": "editor", "project": "my-project"},
-        "spec": {"permissions": [{"actions": ["read", "write"], "scopes": ["Dashboard"]}]},
+        "spec": {
+            "permissions": [{"actions": ["read", "write"], "scopes": ["Dashboard"]}]
+        },
     }
 
 

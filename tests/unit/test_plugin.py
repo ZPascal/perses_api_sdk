@@ -9,9 +9,15 @@ def model():
 
 
 def test_get_plugins(httpx_mock, model):
-    httpx_mock.add_response(json=[
-        {"kind": "PluginModule", "metadata": {"name": "prometheus", "version": "1.0.0"}, "spec": {"plugins": []}}
-    ])
+    httpx_mock.add_response(
+        json=[
+            {
+                "kind": "PluginModule",
+                "metadata": {"name": "prometheus", "version": "1.0.0"},
+                "spec": {"plugins": []},
+            }
+        ]
+    )
     client = Plugin(model)
     result = client.get_plugins()
     assert isinstance(result, list)

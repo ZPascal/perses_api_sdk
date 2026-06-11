@@ -11,18 +11,28 @@ def model():
 
 
 def test_migrate_dashboard(httpx_mock, model):
-    perses_dashboard = {"kind": "Dashboard", "metadata": {"name": "migrated"}, "spec": {}}
+    perses_dashboard = {
+        "kind": "Dashboard",
+        "metadata": {"name": "migrated"},
+        "spec": {},
+    }
     httpx_mock.add_response(json=perses_dashboard)
     client = Migrate(model)
-    result = client.migrate(grafana_dashboard={"title": "My Grafana Dashboard", "panels": []})
+    result = client.migrate(
+        grafana_dashboard={"title": "My Grafana Dashboard", "panels": []}
+    )
     assert result["kind"] == "Dashboard"
 
 
 def test_migrate_with_input(httpx_mock, model):
-    perses_dashboard = {"kind": "Dashboard", "metadata": {"name": "migrated"}, "spec": {}}
+    perses_dashboard = {
+        "kind": "Dashboard",
+        "metadata": {"name": "migrated"},
+        "spec": {},
+    }
     httpx_mock.add_response(json=perses_dashboard)
     client = Migrate(model)
-    result = client.migrate(
+    client.migrate(
         grafana_dashboard={"title": "My Dashboard", "panels": []},
         migration_input={"env": "prod"},
     )

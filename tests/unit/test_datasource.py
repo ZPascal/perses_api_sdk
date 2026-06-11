@@ -47,7 +47,9 @@ def test_create_project_datasource(httpx_mock, model, ds_payload):
     client = ProjectDatasource(model, "my-project")
     body = DatasourceModel(
         metadata=Metadata(name="prom", project="my-project"),
-        spec=DatasourceSpec(default=True, plugin={"kind": "PrometheusPlugin", "spec": {}}),
+        spec=DatasourceSpec(
+            default=True, plugin={"kind": "PrometheusPlugin", "spec": {}}
+        ),
     )
     result = client.create_datasource(body)
     assert result["kind"] == "Datasource"
@@ -58,7 +60,9 @@ def test_update_project_datasource(httpx_mock, model, ds_payload):
     client = ProjectDatasource(model, "my-project")
     body = DatasourceModel(
         metadata=Metadata(name="prom", project="my-project"),
-        spec=DatasourceSpec(default=True, plugin={"kind": "PrometheusPlugin", "spec": {}}),
+        spec=DatasourceSpec(
+            default=True, plugin={"kind": "PrometheusPlugin", "spec": {}}
+        ),
     )
     result = client.update_datasource("prom", body)
     assert result["metadata"]["name"] == "prom"

@@ -15,25 +15,35 @@ def basic_auth_model():
 
 
 def test_get_request_returns_json(httpx_mock, model):
-    httpx_mock.add_response(json={"kind": "Project", "metadata": {"name": "p1"}, "spec": {}})
+    httpx_mock.add_response(
+        json={"kind": "Project", "metadata": {"name": "p1"}, "spec": {}}
+    )
     api = Api(model)
     result = api.call_the_api("/api/v1/projects/p1")
     assert result["kind"] == "Project"
 
 
 def test_post_request_sends_body(httpx_mock, model):
-    httpx_mock.add_response(json={"kind": "Project", "metadata": {"name": "new"}, "spec": {}})
+    httpx_mock.add_response(
+        json={"kind": "Project", "metadata": {"name": "new"}, "spec": {}}
+    )
     api = Api(model)
     body = json.dumps({"kind": "Project", "metadata": {"name": "new"}, "spec": {}})
-    result = api.call_the_api("/api/v1/projects", method=RequestsMethods.POST, json_complete=body)
+    result = api.call_the_api(
+        "/api/v1/projects", method=RequestsMethods.POST, json_complete=body
+    )
     assert result["metadata"]["name"] == "new"
 
 
 def test_put_request(httpx_mock, model):
-    httpx_mock.add_response(json={"kind": "Project", "metadata": {"name": "p1"}, "spec": {}})
+    httpx_mock.add_response(
+        json={"kind": "Project", "metadata": {"name": "p1"}, "spec": {}}
+    )
     api = Api(model)
     body = json.dumps({"kind": "Project", "metadata": {"name": "p1"}, "spec": {}})
-    result = api.call_the_api("/api/v1/projects/p1", method=RequestsMethods.PUT, json_complete=body)
+    result = api.call_the_api(
+        "/api/v1/projects/p1", method=RequestsMethods.PUT, json_complete=body
+    )
     assert result["metadata"]["name"] == "p1"
 
 
@@ -70,7 +80,9 @@ def test_response_status_code_included(httpx_mock, model):
 def test_post_without_body_raises(model):
     api = Api(model)
     with pytest.raises(Exception):
-        api.call_the_api("/api/v1/projects", method=RequestsMethods.POST, json_complete=None)
+        api.call_the_api(
+            "/api/v1/projects", method=RequestsMethods.POST, json_complete=None
+        )
 
 
 def test_non_json_response_returned_as_response(httpx_mock, model):

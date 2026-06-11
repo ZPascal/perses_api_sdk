@@ -47,7 +47,9 @@ def test_create_project_secret(httpx_mock, model, secret_payload):
     client = ProjectSecret(model, "my-project")
     body = SecretModel(
         metadata=Metadata(name="my-secret", project="my-project"),
-        spec=SecretSpec(kind="BasicAuth", spec={"username": "user", "password": "pass"}),
+        spec=SecretSpec(
+            kind="BasicAuth", spec={"username": "user", "password": "pass"}
+        ),
     )
     result = client.create_secret(body)
     assert result["metadata"]["name"] == "my-secret"
@@ -58,7 +60,9 @@ def test_update_project_secret(httpx_mock, model, secret_payload):
     client = ProjectSecret(model, "my-project")
     body = SecretModel(
         metadata=Metadata(name="my-secret", project="my-project"),
-        spec=SecretSpec(kind="BasicAuth", spec={"username": "user", "password": "pass"}),
+        spec=SecretSpec(
+            kind="BasicAuth", spec={"username": "user", "password": "pass"}
+        ),
     )
     result = client.update_secret("my-secret", body)
     assert result["metadata"]["name"] == "my-secret"

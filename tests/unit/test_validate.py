@@ -11,13 +11,17 @@ def model():
 def test_validate_dashboard(httpx_mock, model):
     httpx_mock.add_response(status_code=200, text="")
     client = Validate(model)
-    client.validate("dashboards", {"kind": "Dashboard", "metadata": {"name": "d"}, "spec": {}})
+    client.validate(
+        "dashboards", {"kind": "Dashboard", "metadata": {"name": "d"}, "spec": {}}
+    )
 
 
 def test_validate_datasource(httpx_mock, model):
     httpx_mock.add_response(status_code=200, text="")
     client = Validate(model)
-    client.validate("datasources", {"kind": "Datasource", "metadata": {"name": "ds"}, "spec": {}})
+    client.validate(
+        "datasources", {"kind": "Datasource", "metadata": {"name": "ds"}, "spec": {}}
+    )
 
 
 def test_validate_invalid_resource_type_raises(model):
