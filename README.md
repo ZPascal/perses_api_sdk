@@ -150,20 +150,6 @@ uv sync --extra test
 uv sync --extra docs
 ```
 
-### Available make targets
-
-| Target | Description |
-|---|---|
-| `make lint` | Run ruff linter |
-| `make fmt` | Auto-format with ruff |
-| `make fmt-check` | Check formatting without modifying files |
-| `make test` | Run unit tests |
-| `make docs` | Build Sphinx HTML docs |
-| `make integration` | Start Perses, run integration tests, stop Perses |
-| `make integration-up` | Start Perses via docker compose |
-| `make integration-down` | Stop Perses |
-| `make integration-logs` | Tail Perses container logs |
-
 ### Running integration tests
 
 Requires Docker.
