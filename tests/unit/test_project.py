@@ -1,4 +1,3 @@
-import json
 import pytest
 from perses_api.project import Project
 from perses_api.model import APIModel, Metadata, ProjectSpec
@@ -26,7 +25,7 @@ def test_get_projects(httpx_mock, model, project_payload):
 def test_get_projects_filtered_by_name(httpx_mock, model, project_payload):
     httpx_mock.add_response(json=[project_payload])
     client = Project(model)
-    result = client.get_projects(name="my")
+    client.get_projects(name="my")
     request = httpx_mock.get_requests()[0]
     assert "name=my" in str(request.url)
 

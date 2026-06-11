@@ -1,0 +1,141 @@
+name: PR Checks
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  pr-lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install ruff
+        run: uv tool install ruff
+
+      - name: Run ruff check
+        run: uv tool run ruff check .
+
+      - name: Run ruff format check
+        run: uv tool run ruff format --check .
+
+  pr-test:
+    name: Test / Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --extra test
+
+      - name: Run unit tests
+        run: uv run pytest tests/unit/ --cov=perses_api --cov-report=xml --cov-report=term-missing
+
+      - name: Upload coverage
+        if: matrix.python-version == '3.12'
+        uses: codecov/codecov-action@v5
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false
+
+  pr-integration:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    needs: pr-test
+
+    services:
+      perses:
+        image: persesdev/perses:latest
+        ports:
+          - 8080:8080
+        env:
+          PERSES_SECURITY_ENABLE_AUTH: "true"
+          PERSES_SECURITY_AUTHENTICATION_PROVIDERS_ENABLE_NATIVE: "true"
+          PERSES_SECURITY_AUTHORIZATION_PROVIDER_NATIVE_GUEST_PERMISSIONS_0_ACTIONS_0: "*"
+          PERSES_SECURITY_AUTHORIZATION_PROVIDER_NATIVE_GUEST_PERMISSIONS_0_SCOPES_0: "*"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --extra test
+
+      - name: Wait for Perses to be ready
+        run: |
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:8080/api/v1/health && break
+            echo "Waiting for Perses... ($i/20)"
+            sleep 3
+          done
+
+      - name: Bootstrap Perses admin
+        run: |
+          curl -sf -X POST http://localhost:8080/api/v1/users \
+            -H "Content-Type: application/json" \
+            -d '{"kind":"User","metadata":{"name":"admin"},"spec":{"firstName":"Admin","lastName":"","nativeProvider":{"password":"password"}}}'
+
+          TOKEN=$(curl -sf -X POST http://localhost:8080/api/auth/providers/native/login \
+            -H "Content-Type: application/json" \
+            -d '{"login":"admin","password":"password"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+
+          curl -sf -X POST http://localhost:8080/api/v1/globalroles \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -d '{"kind":"GlobalRole","metadata":{"name":"admin"},"spec":{"permissions":[{"actions":["*"],"scopes":["*"]}]}}'
+
+          curl -sf -X POST http://localhost:8080/api/v1/globalrolebindings \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -d '{"kind":"GlobalRoleBinding","metadata":{"name":"admin"},"spec":{"role":"admin","subjects":[{"kind":"User","name":"admin"}]}}'
+
+      - name: Run integration tests
+        env:
+          PERSES_HOST: http://localhost:8080
+          PERSES_USERNAME: admin
+          PERSES_PASSWORD: password
+        run: uv run pytest tests/integration/ -v
+
+  pr-docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    needs: [pr-lint, pr-test, pr-integration]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --extra docs
+
+      - name: Build Sphinx docs
+        run: uv run sphinx-build -W -b html docs docs/_build/html

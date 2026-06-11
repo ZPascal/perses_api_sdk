@@ -17,6 +17,10 @@ dependencies = [
 [project.optional-dependencies]
 http2 = ["httpx[http2]"]
 test = ["pytest>=7.0", "pytest-httpx>=0.21", "pytest-cov>=4.0"]
+docs = [
+    "sphinx>=7.0",
+    "sphinx-rtd-theme>=2.0",
+]
 
 [tool.setuptools.packages.find]
 where = ["."]
@@ -24,3 +28,6 @@ include = ["perses_api*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "integration: marks tests as integration tests requiring a live Perses instance (deselect with '-m not integration')",
+]
