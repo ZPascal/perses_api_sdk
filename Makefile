@@ -16,7 +16,7 @@ docs:
 	uv run sphinx-build -W -b html docs docs/_build/html
 
 integration-up:
-	docker compose up -d --wait
+	docker compose up -d
 
 integration-down:
 	docker compose down
@@ -25,6 +25,11 @@ integration-logs:
 	docker compose logs perses
 
 integration: integration-up
+	@for i in $$(seq 1 20); do \
+		curl -sf http://localhost:8080/api/v1/health && break; \
+		echo "Waiting for Perses... ($$i/20)"; \
+		sleep 3; \
+	done
 	curl -sf -X POST http://localhost:8080/api/v1/users \
 		-H "Content-Type: application/json" \
 		-d '{"kind":"User","metadata":{"name":"admin"},"spec":{"firstName":"Admin","lastName":"","nativeProvider":{"password":"password"}}}' || true
@@ -42,7 +47,7 @@ integration: integration-up
 	PERSES_HOST=http://localhost:8080 \
 	PERSES_USERNAME=admin \
 	PERSES_PASSWORD=password \
-	uv run pytest tests/integration/ -v; \
+	uv run --extra test pytest tests/integration/ -v; \
 	status=$$?; \
 	$(MAKE) integration-down; \
 	exit $$status
