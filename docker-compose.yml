@@ -1,6 +1,6 @@
 services:
   perses:
-    image: persesdev/perses:latest
+    image: persesdev/perses:v0.53.1
     ports:
       - "8080:8080"
     environment:

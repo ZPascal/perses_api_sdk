@@ -1,0 +1,77 @@
+name: Integrationtest
+
+on:
+  schedule:
+    - cron: '0 22 * * 1'
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+
+  perses-api-sdk-test:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.10' ]
+
+    services:
+      perses:
+        image: persesdev/perses:v0.53.1
+        ports:
+          - 8080:8080
+        env:
+          PERSES_SECURITY_ENABLE_AUTH: "true"
+          PERSES_SECURITY_AUTHENTICATION_PROVIDERS_ENABLE_NATIVE: "true"
+          PERSES_SECURITY_AUTHORIZATION_PROVIDER_NATIVE_GUEST_PERMISSIONS_0_ACTIONS_0: "*"
+          PERSES_SECURITY_AUTHORIZATION_PROVIDER_NATIVE_GUEST_PERMISSIONS_0_SCOPES_0: "*"
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --extra test
+
+      - name: Wait for Perses to be ready
+        run: |
+          for i in $(seq 1 20); do
+            curl -sf http://localhost:8080/api/v1/health && break
+            echo "Waiting for Perses... ($i/20)"
+            sleep 3
+          done
+
+      - name: Bootstrap Perses admin
+        run: |
+          curl -sf -X POST http://localhost:8080/api/v1/users \
+            -H "Content-Type: application/json" \
+            -d '{"kind":"User","metadata":{"name":"admin"},"spec":{"firstName":"Admin","lastName":"","nativeProvider":{"password":"password"}}}'
+
+          TOKEN=$(curl -sf -X POST http://localhost:8080/api/auth/providers/native/login \
+            -H "Content-Type: application/json" \
+            -d '{"login":"admin","password":"password"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])")
+
+          curl -sf -X POST http://localhost:8080/api/v1/globalroles \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -d '{"kind":"GlobalRole","metadata":{"name":"admin"},"spec":{"permissions":[{"actions":["*"],"scopes":["*"]}]}}'
+
+          curl -sf -X POST http://localhost:8080/api/v1/globalrolebindings \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -d '{"kind":"GlobalRoleBinding","metadata":{"name":"admin"},"spec":{"role":"admin","subjects":[{"kind":"User","name":"admin"}]}}'
+
+      - name: Run integration tests
+        env:
+          PERSES_HOST: http://localhost:8080
+          PERSES_USERNAME: admin
+          PERSES_PASSWORD: password
+        run: uv run pytest tests/integration/ -v

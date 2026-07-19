@@ -47,4 +47,8 @@ class Migrate:
         if not isinstance(result, dict):
             logging.error("Migration failed.")
             raise Exception(result)
+        if "kind" not in result:
+            error_msg = result.get("message", "Unknown error")
+            logging.error(f"Migration failed: {error_msg}")
+            raise Exception(result)
         return result

@@ -1,4 +1,4 @@
-# perses-api-sdk
+# perses-api-sdk ![Coverage report](https://github.com/ZPascal/perses_api_sdk/blob/main/docs/coverage.svg)
 
 A Python SDK for the [Perses](https://perses.dev) API.
 
