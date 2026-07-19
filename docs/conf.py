@@ -4,7 +4,7 @@ import sys
 sys.path.insert(0, os.path.abspath(".."))
 
 project = "Perses API SDK"
-copyright = "2024, Perses API SDK Contributors"
+copyright = "2026, Perses API SDK Contributors"
 author = "Perses API SDK Contributors"
 
 extensions = [
