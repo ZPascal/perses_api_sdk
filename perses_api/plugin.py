@@ -3,7 +3,9 @@ from __future__ import annotations
 import logging
 
 from .api import Api
-from .model import APIModel, APIEndpoints
+
+logger = logging.getLogger(__name__)
+from .model import APIEndpoints, APIModel
 
 
 class Plugin:
@@ -30,6 +32,6 @@ class Plugin:
         """
         result = self.api.call_the_api(APIEndpoints.PLUGINS.value)
         if not isinstance(result, list):
-            logging.error("Failed to retrieve plugins.")
-            raise Exception(result)
+            logger.error("Failed to retrieve plugins.")
+            raise TypeError(result)
         return result

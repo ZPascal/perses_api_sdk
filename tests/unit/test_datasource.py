@@ -1,6 +1,7 @@
 import pytest
-from perses_api.datasource import ProjectDatasource, GlobalDatasource
-from perses_api.model import APIModel, Metadata, DatasourceSpec
+
+from perses_api.datasource import GlobalDatasource, ProjectDatasource
+from perses_api.model import APIModel, DatasourceSpec, Metadata
 from perses_api.model import Datasource as DatasourceModel
 
 

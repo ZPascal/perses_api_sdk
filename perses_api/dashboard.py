@@ -3,7 +3,9 @@ from __future__ import annotations
 import logging
 
 from .api import Api
-from .model import APIModel, APIEndpoints, RequestsMethods
+
+logger = logging.getLogger(__name__)
+from .model import APIEndpoints, APIModel, RequestsMethods
 from .model import Dashboard as DashboardModel
 
 
@@ -20,7 +22,7 @@ class Dashboard:
     def __init__(self, perses_api_model: APIModel):
         self.api = Api(perses_api_model)
 
-    def get_dashboards(self, project_name: str, name: str = None) -> list:
+    def get_dashboards(self, project_name: str, name: str | None = None) -> list:
         """The method includes a functionality to retrieve all dashboards within a project
 
         Args:
@@ -41,8 +43,8 @@ class Dashboard:
             path = f"{path}?name={name}"
         result = self.api.call_the_api(path)
         if not isinstance(result, list):
-            logging.error("Failed to retrieve dashboards.")
-            raise Exception(result)
+            logger.error("Failed to retrieve dashboards.")
+            raise TypeError(result)
         return result
 
     def get_dashboard(self, project_name: str, name: str) -> dict:
@@ -67,8 +69,8 @@ class Dashboard:
             APIEndpoints.DASHBOARD.value.format(project=project_name, name=name)
         )
         if not isinstance(result, dict):
-            logging.error(f"Failed to retrieve dashboard: {name}")
-            raise Exception(result)
+            logger.error(f"Failed to retrieve dashboard: {name}")
+            raise TypeError(result)
         return result
 
     def create_dashboard(self, project_name: str, dashboard: DashboardModel) -> dict:
@@ -93,8 +95,8 @@ class Dashboard:
             json_complete=dashboard.model_dump_json(by_alias=True, exclude_none=True),
         )
         if not isinstance(result, dict):
-            logging.error("Failed to create dashboard.")
-            raise Exception(result)
+            logger.error("Failed to create dashboard.")
+            raise TypeError(result)
         return result
 
     def update_dashboard(
@@ -124,8 +126,8 @@ class Dashboard:
             json_complete=dashboard.model_dump_json(by_alias=True, exclude_none=True),
         )
         if not isinstance(result, dict):
-            logging.error(f"Failed to update dashboard: {name}")
-            raise Exception(result)
+            logger.error(f"Failed to update dashboard: {name}")
+            raise TypeError(result)
         return result
 
     def delete_dashboard(self, project_name: str, name: str) -> None:

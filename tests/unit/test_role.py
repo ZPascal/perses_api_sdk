@@ -1,7 +1,8 @@
 import pytest
-from perses_api.role import ProjectRole, GlobalRole
-from perses_api.model import APIModel, Metadata, RoleSpec, Permission
+
+from perses_api.model import APIModel, Metadata, Permission, RoleSpec
 from perses_api.model import Role as RoleModel
+from perses_api.role import GlobalRole, ProjectRole
 
 
 @pytest.fixture

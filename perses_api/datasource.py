@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from ._base import ResourceBase
-from .model import APIModel, APIEndpoints
+from .model import APIEndpoints, APIModel
 
 
 class DatasourceBase(ResourceBase):
@@ -14,7 +14,7 @@ class DatasourceBase(ResourceBase):
         api (Api): This is where we store the api
     """
 
-    def get_datasources(self, name: str = None) -> list:
+    def get_datasources(self, name: str | None = None) -> list:
         """The method includes a functionality to retrieve all datasources
 
         Args:

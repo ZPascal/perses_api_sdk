@@ -3,7 +3,9 @@ from __future__ import annotations
 import logging
 
 from .api import Api
-from .model import APIModel, APIEndpoints, RequestsMethods
+
+logger = logging.getLogger(__name__)
+from .model import APIEndpoints, APIModel, RequestsMethods
 from .model import EphemeralDashboard as EphemeralDashboardModel
 
 
@@ -20,7 +22,7 @@ class EphemeralDashboard:
     def __init__(self, perses_api_model: APIModel):
         self.api = Api(perses_api_model)
 
-    def get_ephemeral_dashboards(self, project_name: str, name: str = None) -> list:
+    def get_ephemeral_dashboards(self, project_name: str, name: str | None = None) -> list:
         """The method includes a functionality to retrieve all ephemeral dashboards within a project
 
         Args:
@@ -41,8 +43,8 @@ class EphemeralDashboard:
             path = f"{path}?name={name}"
         result = self.api.call_the_api(path)
         if not isinstance(result, list):
-            logging.error("Failed to retrieve ephemeral dashboards.")
-            raise Exception(result)
+            logger.error("Failed to retrieve ephemeral dashboards.")
+            raise TypeError(result)
         return result
 
     def get_ephemeral_dashboard(self, project_name: str, name: str) -> dict:
@@ -69,8 +71,8 @@ class EphemeralDashboard:
             )
         )
         if not isinstance(result, dict):
-            logging.error(f"Failed to retrieve ephemeral dashboard: {name}")
-            raise Exception(result)
+            logger.error(f"Failed to retrieve ephemeral dashboard: {name}")
+            raise TypeError(result)
         return result
 
     def create_ephemeral_dashboard(
@@ -99,8 +101,8 @@ class EphemeralDashboard:
             ),
         )
         if not isinstance(result, dict):
-            logging.error("Failed to create ephemeral dashboard.")
-            raise Exception(result)
+            logger.error("Failed to create ephemeral dashboard.")
+            raise TypeError(result)
         return result
 
     def update_ephemeral_dashboard(
@@ -134,8 +136,8 @@ class EphemeralDashboard:
             ),
         )
         if not isinstance(result, dict):
-            logging.error(f"Failed to update ephemeral dashboard: {name}")
-            raise Exception(result)
+            logger.error(f"Failed to update ephemeral dashboard: {name}")
+            raise TypeError(result)
         return result
 
     def delete_ephemeral_dashboard(self, project_name: str, name: str) -> None:

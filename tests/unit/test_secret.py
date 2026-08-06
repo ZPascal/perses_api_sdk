@@ -1,7 +1,8 @@
 import pytest
-from perses_api.secret import ProjectSecret, GlobalSecret
+
 from perses_api.model import APIModel, Metadata, SecretSpec
 from perses_api.model import Secret as SecretModel
+from perses_api.secret import GlobalSecret, ProjectSecret
 
 
 @pytest.fixture
