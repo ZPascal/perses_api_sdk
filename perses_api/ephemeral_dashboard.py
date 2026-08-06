@@ -22,7 +22,9 @@ class EphemeralDashboard:
     def __init__(self, perses_api_model: APIModel):
         self.api = Api(perses_api_model)
 
-    def get_ephemeral_dashboards(self, project_name: str, name: str | None = None) -> list:
+    def get_ephemeral_dashboards(
+        self, project_name: str, name: str | None = None
+    ) -> list:
         """The method includes a functionality to retrieve all ephemeral dashboards within a project
 
         Args:

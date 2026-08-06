@@ -45,9 +45,7 @@ class APIModel:
     username: str | None = None  #: Username for basic authentication
     password: str | None = None  #: Password for basic authentication
     timeout: float = 10.0  #: Timeout of the API call in seconds
-    headers: dict | None = (
-        None  #: Additional HTTP headers to include in every request
-    )
+    headers: dict | None = None  #: Additional HTTP headers to include in every request
     http2_support: bool = False  #: Whether to use HTTP/2
     ssl_context: Any = None  #: Custom SSL context or certificate path
     num_pools: int = 10  #: Maximum number of HTTP connections

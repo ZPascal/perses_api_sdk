@@ -22,7 +22,9 @@ class Migrate:
     def __init__(self, perses_api_model: APIModel):
         self.api = Api(perses_api_model)
 
-    def migrate(self, grafana_dashboard: dict, migration_input: dict | None = None) -> dict:
+    def migrate(
+        self, grafana_dashboard: dict, migration_input: dict | None = None
+    ) -> dict:
         """The method includes a functionality to migrate a Grafana dashboard to the Perses format
 
         Args:
