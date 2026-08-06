@@ -4,7 +4,9 @@ import json
 import logging
 
 from .api import Api
-from .model import APIModel, APIEndpoints, RequestsMethods
+
+logger = logging.getLogger(__name__)
+from .model import APIEndpoints, APIModel, RequestsMethods
 
 
 class Migrate:
@@ -20,7 +22,7 @@ class Migrate:
     def __init__(self, perses_api_model: APIModel):
         self.api = Api(perses_api_model)
 
-    def migrate(self, grafana_dashboard: dict, migration_input: dict = None) -> dict:
+    def migrate(self, grafana_dashboard: dict, migration_input: dict | None = None) -> dict:
         """The method includes a functionality to migrate a Grafana dashboard to the Perses format
 
         Args:
@@ -45,10 +47,10 @@ class Migrate:
             json_complete=json.dumps(body),
         )
         if not isinstance(result, dict):
-            logging.error("Migration failed.")
-            raise Exception(result)
+            logger.error("Migration failed.")
+            raise TypeError(result)
         if "kind" not in result:
             error_msg = result.get("message", "Unknown error")
-            logging.error(f"Migration failed: {error_msg}")
-            raise Exception(result)
+            logger.error(f"Migration failed: {error_msg}")
+            raise TypeError(result)
         return result

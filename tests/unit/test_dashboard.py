@@ -1,6 +1,7 @@
 import pytest
+
 from perses_api.dashboard import Dashboard
-from perses_api.model import APIModel, Metadata, DashboardSpec
+from perses_api.model import APIModel, DashboardSpec, Metadata
 from perses_api.model import Dashboard as DashboardModel
 
 

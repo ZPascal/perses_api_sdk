@@ -1,12 +1,12 @@
 from perses_api.model import (
-    APIModel,
-    RequestsMethods,
     APIEndpoints,
+    APIModel,
+    Dashboard,
+    DashboardSpec,
     Metadata,
     Project,
     ProjectSpec,
-    Dashboard,
-    DashboardSpec,
+    RequestsMethods,
     User,
     UserSpec,
 )

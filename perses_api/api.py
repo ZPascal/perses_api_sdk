@@ -4,11 +4,13 @@ import asyncio
 import base64
 import json
 import logging
-from typing import Any, Union
+from typing import Any
 
 import httpx
 
 from .model import APIModel, RequestsMethods
+
+logger = logging.getLogger(__name__)
 
 
 class Api:
@@ -28,7 +30,7 @@ class Api:
         self,
         api_call: str,
         method: RequestsMethods = RequestsMethods.GET,
-        json_complete: str = None,
+        json_complete: str | None = None,
         response_status_code: bool = False,
     ) -> Any:
         """The method includes a functionality to execute a defined API call against the Perses endpoints
@@ -77,8 +79,8 @@ class Api:
         return self._check_the_api_call_response(response, response_status_code)
 
     def create_the_http_api_client(
-        self, headers: dict = None
-    ) -> Union[httpx.Client, httpx.AsyncClient]:
+        self, headers: dict | None = None
+    ) -> httpx.Client | httpx.AsyncClient:
         """The method includes a functionality to create the HTTP client based on the API model configuration
 
         Args:
@@ -119,7 +121,7 @@ class Api:
 
     def _send_request(
         self,
-        http: Union[httpx.Client, httpx.AsyncClient],
+        http: httpx.Client | httpx.AsyncClient,
         method: RequestsMethods,
         api_url: str,
         json_complete: str,
@@ -141,7 +143,7 @@ class Api:
         if method in (RequestsMethods.GET, RequestsMethods.DELETE):
             return http.request(method.value, api_url)
         if json_complete is None:
-            logging.error("Please define the json_complete.")
+            logger.error("Please define the json_complete.")
             raise ValueError(f"json_complete is required for {method.value}")
         return http.request(method.value, api_url, content=json_complete)
 

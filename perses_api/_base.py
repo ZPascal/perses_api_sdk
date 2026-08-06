@@ -3,6 +3,8 @@ from __future__ import annotations
 import logging
 
 from .api import Api
+
+logger = logging.getLogger(__name__)
 from .model import APIModel, RequestsMethods
 
 
@@ -30,7 +32,7 @@ class ResourceBase:
         """
         raise NotImplementedError
 
-    def _get_all(self, name: str = None) -> list:
+    def _get_all(self, name: str | None = None) -> list:
         """The method includes a functionality to retrieve all resources, optionally filtered by name
 
         Args:
@@ -47,8 +49,8 @@ class ResourceBase:
             path = f"{path}?name={name}"
         result = self.api.call_the_api(path)
         if not isinstance(result, list):
-            logging.error(f"Failed to retrieve resources from {self._base_path()}.")
-            raise Exception(result)
+            logger.error(f"Failed to retrieve resources from {self._base_path()}.")
+            raise TypeError(result)
         return result
 
     def _get_one(self, name: str) -> dict:
@@ -68,8 +70,8 @@ class ResourceBase:
             raise ValueError("name must not be empty")
         result = self.api.call_the_api(f"{self._base_path()}/{name}")
         if not isinstance(result, dict):
-            logging.error(f"Failed to retrieve resource: {name}")
-            raise Exception(result)
+            logger.error(f"Failed to retrieve resource: {name}")
+            raise TypeError(result)
         return result
 
     def _create(self, body) -> dict:
@@ -90,8 +92,8 @@ class ResourceBase:
             json_complete=body.model_dump_json(by_alias=True, exclude_none=True),
         )
         if not isinstance(result, dict):
-            logging.error(f"Failed to create resource at {self._base_path()}.")
-            raise Exception(result)
+            logger.error(f"Failed to create resource at {self._base_path()}.")
+            raise TypeError(result)
         return result
 
     def _update(self, name: str, body) -> dict:
@@ -116,8 +118,8 @@ class ResourceBase:
             json_complete=body.model_dump_json(by_alias=True, exclude_none=True),
         )
         if not isinstance(result, dict):
-            logging.error(f"Failed to update resource: {name}")
-            raise Exception(result)
+            logger.error(f"Failed to update resource: {name}")
+            raise TypeError(result)
         return result
 
     def _delete(self, name: str) -> None:

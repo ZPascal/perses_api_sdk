@@ -1,6 +1,7 @@
 import pytest
-from perses_api.validate import Validate
+
 from perses_api.model import APIModel
+from perses_api.validate import Validate
 
 
 @pytest.fixture

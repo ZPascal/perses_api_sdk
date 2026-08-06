@@ -1,29 +1,42 @@
 import uuid
+
 from perses_api import (
-    Project,
     Dashboard,
-    ProjectDatasource,
-    ProjectVariable,
-    ProjectRole,
-    User,
-    Plugin,
     Migrate,
+    Plugin,
+    Project,
+    ProjectDatasource,
+    ProjectRole,
+    ProjectVariable,
+    User,
 )
 from perses_api.model import (
-    Metadata,
-    ProjectSpec,
-    Project as ProjectModel,
-    DashboardSpec,
     Dashboard as DashboardModel,
+)
+from perses_api.model import (
+    DashboardSpec,
     DatasourceSpec,
-    Datasource as DatasourceModel,
-    VariableSpec,
-    Variable as VariableModel,
-    RoleSpec,
+    Metadata,
     Permission,
-    Role as RoleModel,
+    ProjectSpec,
+    RoleSpec,
     UserSpec,
+    VariableSpec,
+)
+from perses_api.model import (
+    Datasource as DatasourceModel,
+)
+from perses_api.model import (
+    Project as ProjectModel,
+)
+from perses_api.model import (
+    Role as RoleModel,
+)
+from perses_api.model import (
     User as UserModel,
+)
+from perses_api.model import (
+    Variable as VariableModel,
 )
 
 
