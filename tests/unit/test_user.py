@@ -1,7 +1,8 @@
 import pytest
-from perses_api.user import User
+
 from perses_api.model import APIModel, Metadata, UserSpec
 from perses_api.model import User as UserModel
+from perses_api.user import User
 
 
 @pytest.fixture

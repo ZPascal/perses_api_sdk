@@ -1,6 +1,7 @@
 import pytest
+
 from perses_api.ephemeral_dashboard import EphemeralDashboard
-from perses_api.model import APIModel, Metadata, EphemeralDashboardSpec
+from perses_api.model import APIModel, EphemeralDashboardSpec, Metadata
 from perses_api.model import EphemeralDashboard as EphemeralDashboardModel
 
 

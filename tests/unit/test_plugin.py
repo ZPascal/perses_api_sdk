@@ -1,6 +1,7 @@
 import pytest
-from perses_api.plugin import Plugin
+
 from perses_api.model import APIModel
+from perses_api.plugin import Plugin
 
 
 @pytest.fixture

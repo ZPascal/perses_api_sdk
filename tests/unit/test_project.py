@@ -1,7 +1,8 @@
 import pytest
-from perses_api.project import Project
+
 from perses_api.model import APIModel, Metadata, ProjectSpec
 from perses_api.model import Project as ProjectModel
+from perses_api.project import Project
 
 
 @pytest.fixture

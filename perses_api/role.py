@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from ._base import ResourceBase
-from .model import APIModel, APIEndpoints
+from .model import APIEndpoints, APIModel
 
 
 class RoleBase(ResourceBase):
@@ -14,7 +14,7 @@ class RoleBase(ResourceBase):
         api (Api): This is where we store the api
     """
 
-    def get_roles(self, name: str = None) -> list:
+    def get_roles(self, name: str | None = None) -> list:
         """The method includes a functionality to retrieve all roles
 
         Args:

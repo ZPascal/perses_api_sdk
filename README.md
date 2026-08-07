@@ -83,10 +83,10 @@ client = APIModel(host="http://localhost:8080", username="admin", password="secr
 client = APIModel(
     host="http://localhost:8080",
     token="<token>",
-    timeout=30.0,           # request timeout in seconds (default: 10)
-    http2_support=False,    # enable HTTP/2 (requires httpx[http2])
-    num_pools=10,           # max concurrent connections
-    retries=False,          # retry failed requests
+    timeout=30.0,  # request timeout in seconds (default: 10)
+    http2_support=False,  # enable HTTP/2 (requires httpx[http2])
+    num_pools=10,  # max concurrent connections
+    retries=False,  # retry failed requests
     follow_redirects=True,  # follow HTTP redirects
 )
 ```

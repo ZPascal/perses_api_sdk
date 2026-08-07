@@ -3,7 +3,9 @@ from __future__ import annotations
 import logging
 
 from .api import Api
-from .model import APIModel, APIEndpoints, RequestsMethods
+
+logger = logging.getLogger(__name__)
+from .model import APIEndpoints, APIModel, RequestsMethods
 from .model import Project as ProjectModel
 
 
@@ -20,7 +22,7 @@ class Project:
     def __init__(self, perses_api_model: APIModel):
         self.api = Api(perses_api_model)
 
-    def get_projects(self, name: str = None) -> list:
+    def get_projects(self, name: str | None = None) -> list:
         """The method includes a functionality to retrieve all projects
 
         Args:
@@ -37,8 +39,8 @@ class Project:
             path = f"{path}?name={name}"
         result = self.api.call_the_api(path)
         if not isinstance(result, list):
-            logging.error("Failed to retrieve projects.")
-            raise Exception(result)
+            logger.error("Failed to retrieve projects.")
+            raise TypeError(result)
         return result
 
     def get_project(self, name: str) -> dict:
@@ -58,8 +60,8 @@ class Project:
             raise ValueError("name must not be empty")
         result = self.api.call_the_api(APIEndpoints.PROJECT.value.format(project=name))
         if not isinstance(result, dict):
-            logging.error(f"Failed to retrieve project: {name}")
-            raise Exception(result)
+            logger.error(f"Failed to retrieve project: {name}")
+            raise TypeError(result)
         return result
 
     def create_project(self, project: ProjectModel) -> dict:
@@ -80,8 +82,8 @@ class Project:
             json_complete=project.model_dump_json(by_alias=True, exclude_none=True),
         )
         if not isinstance(result, dict):
-            logging.error("Failed to create project.")
-            raise Exception(result)
+            logger.error("Failed to create project.")
+            raise TypeError(result)
         return result
 
     def update_project(self, name: str, project: ProjectModel) -> dict:
@@ -106,8 +108,8 @@ class Project:
             json_complete=project.model_dump_json(by_alias=True, exclude_none=True),
         )
         if not isinstance(result, dict):
-            logging.error(f"Failed to update project: {name}")
-            raise Exception(result)
+            logger.error(f"Failed to update project: {name}")
+            raise TypeError(result)
         return result
 
     def delete_project(self, name: str) -> None:

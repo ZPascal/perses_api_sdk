@@ -1,5 +1,7 @@
 import json
+
 import pytest
+
 from perses_api.api import Api
 from perses_api.model import APIModel, RequestsMethods
 
@@ -79,7 +81,7 @@ def test_response_status_code_included(httpx_mock, model):
 
 def test_post_without_body_raises(model):
     api = Api(model)
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         api.call_the_api(
             "/api/v1/projects", method=RequestsMethods.POST, json_complete=None
         )

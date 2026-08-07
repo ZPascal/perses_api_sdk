@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
@@ -41,13 +41,11 @@ class APIModel:
     """
 
     host: str  #: The host of the Perses instance
-    token: Optional[str] = None  #: Bearer token for authentication
-    username: Optional[str] = None  #: Username for basic authentication
-    password: Optional[str] = None  #: Password for basic authentication
+    token: str | None = None  #: Bearer token for authentication
+    username: str | None = None  #: Username for basic authentication
+    password: str | None = None  #: Password for basic authentication
     timeout: float = 10.0  #: Timeout of the API call in seconds
-    headers: Optional[dict] = (
-        None  #: Additional HTTP headers to include in every request
-    )
+    headers: dict | None = None  #: Additional HTTP headers to include in every request
     http2_support: bool = False  #: Whether to use HTTP/2
     ssl_context: Any = None  #: Custom SSL context or certificate path
     num_pools: int = 10  #: Maximum number of HTTP connections
@@ -122,10 +120,10 @@ class Metadata(_CamelModel):
     """
 
     name: str
-    project: Optional[str] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
-    version: Optional[int] = None
+    project: str | None = None
+    created_at: str | None = None
+    updated_at: str | None = None
+    version: int | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -140,7 +138,7 @@ class ProjectSpec(_CamelModel):
         display (dict): Specify optional display properties such as a human-readable name (default None)
     """
 
-    display: Optional[dict] = None
+    display: dict | None = None
 
 
 class Project(_CamelModel):
@@ -170,13 +168,13 @@ class DashboardSpec(_CamelModel):
         refresh_interval (str): Specify the default auto-refresh interval, e.g. 30s (default None)
     """
 
-    display: Optional[dict] = None
-    datasources: Optional[dict] = None
-    variables: Optional[list] = None
-    panels: Optional[dict] = None
-    layouts: Optional[list] = None
-    duration: Optional[str] = None
-    refresh_interval: Optional[str] = None
+    display: dict | None = None
+    datasources: dict | None = None
+    variables: list | None = None
+    panels: dict | None = None
+    layouts: list | None = None
+    duration: str | None = None
+    refresh_interval: str | None = None
 
 
 class Dashboard(_CamelModel):
@@ -208,13 +206,13 @@ class EphemeralDashboardSpec(_CamelModel):
     """
 
     ttl: str
-    display: Optional[dict] = None
-    datasources: Optional[dict] = None
-    variables: Optional[list] = None
-    panels: Optional[dict] = None
-    layouts: Optional[list] = None
-    duration: Optional[str] = None
-    refresh_interval: Optional[str] = None
+    display: dict | None = None
+    datasources: dict | None = None
+    variables: list | None = None
+    panels: dict | None = None
+    layouts: list | None = None
+    duration: str | None = None
+    refresh_interval: str | None = None
 
 
 class EphemeralDashboard(_CamelModel):
@@ -463,10 +461,10 @@ class UserSpec(_CamelModel):
         oauth_providers (list): Specify the list of OAuth provider configurations (default None)
     """
 
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    native_provider: Optional[dict] = None
-    oauth_providers: Optional[list] = None
+    first_name: str | None = None
+    last_name: str | None = None
+    native_provider: dict | None = None
+    oauth_providers: list | None = None
 
 
 class User(_CamelModel):
@@ -504,7 +502,7 @@ class PluginEntry(_CamelModel):
     """
 
     kind: str
-    display: Optional[dict] = None
+    display: dict | None = None
 
 
 class PluginModuleSpec(_CamelModel):
@@ -515,7 +513,7 @@ class PluginModuleSpec(_CamelModel):
         plugins (list[PluginEntry]): Specify the list of plugins provided by this module (default [])
     """
 
-    schemas_path: Optional[str] = None
+    schemas_path: str | None = None
     plugins: list[PluginEntry] = Field(default_factory=list)
 
 

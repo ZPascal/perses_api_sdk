@@ -3,7 +3,9 @@ from __future__ import annotations
 import logging
 
 from .api import Api
-from .model import APIModel, APIEndpoints, RequestsMethods
+
+logger = logging.getLogger(__name__)
+from .model import APIEndpoints, APIModel, RequestsMethods
 from .model import User as UserModel
 
 
@@ -20,7 +22,7 @@ class User:
     def __init__(self, perses_api_model: APIModel):
         self.api = Api(perses_api_model)
 
-    def get_users(self, name: str = None) -> list:
+    def get_users(self, name: str | None = None) -> list:
         """The method includes a functionality to retrieve all users
 
         Args:
@@ -37,8 +39,8 @@ class User:
             path = f"{path}?name={name}"
         result = self.api.call_the_api(path)
         if not isinstance(result, list):
-            logging.error("Failed to retrieve users.")
-            raise Exception(result)
+            logger.error("Failed to retrieve users.")
+            raise TypeError(result)
         return result
 
     def get_user(self, name: str) -> dict:
@@ -58,8 +60,8 @@ class User:
             raise ValueError("name must not be empty")
         result = self.api.call_the_api(APIEndpoints.USER.value.format(name=name))
         if not isinstance(result, dict):
-            logging.error(f"Failed to retrieve user: {name}")
-            raise Exception(result)
+            logger.error(f"Failed to retrieve user: {name}")
+            raise TypeError(result)
         return result
 
     def create_user(self, user: UserModel) -> dict:
@@ -80,8 +82,8 @@ class User:
             json_complete=user.model_dump_json(by_alias=True, exclude_none=True),
         )
         if not isinstance(result, dict):
-            logging.error("Failed to create user.")
-            raise Exception(result)
+            logger.error("Failed to create user.")
+            raise TypeError(result)
         return result
 
     def update_user(self, name: str, user: UserModel) -> dict:
@@ -106,8 +108,8 @@ class User:
             json_complete=user.model_dump_json(by_alias=True, exclude_none=True),
         )
         if not isinstance(result, dict):
-            logging.error(f"Failed to update user: {name}")
-            raise Exception(result)
+            logger.error(f"Failed to update user: {name}")
+            raise TypeError(result)
         return result
 
     def delete_user(self, name: str) -> None:

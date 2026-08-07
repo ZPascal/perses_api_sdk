@@ -4,7 +4,9 @@ import json
 import logging
 
 from .api import Api
-from .model import APIModel, APIEndpoints, RequestsMethods
+
+logger = logging.getLogger(__name__)
+from .model import APIEndpoints, APIModel, RequestsMethods
 
 VALID_RESOURCE_TYPES = frozenset(
     {
@@ -53,5 +55,5 @@ class Validate:
             json_complete=json.dumps(body),
         )
         if isinstance(result, dict) and result.get("code") and result["code"] >= 400:
-            logging.error(f"Validation failed for {resource_type}.")
-            raise Exception(result)
+            logger.error(f"Validation failed for {resource_type}.")
+            raise TypeError(result)

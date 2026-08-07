@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from ._base import ResourceBase
-from .model import APIModel, APIEndpoints
+from .model import APIEndpoints, APIModel
 
 
 class SecretBase(ResourceBase):
@@ -14,7 +14,7 @@ class SecretBase(ResourceBase):
         api (Api): This is where we store the api
     """
 
-    def get_secrets(self, name: str = None) -> list:
+    def get_secrets(self, name: str | None = None) -> list:
         """The method includes a functionality to retrieve all secrets
 
         Args:

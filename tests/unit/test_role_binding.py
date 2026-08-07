@@ -1,7 +1,8 @@
 import pytest
-from perses_api.role_binding import ProjectRoleBinding, GlobalRoleBinding
+
 from perses_api.model import APIModel, Metadata, RoleBindingSpec, Subject
 from perses_api.model import RoleBinding as RoleBindingModel
+from perses_api.role_binding import GlobalRoleBinding, ProjectRoleBinding
 
 
 @pytest.fixture

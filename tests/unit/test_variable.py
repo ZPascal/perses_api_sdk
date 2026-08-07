@@ -1,7 +1,8 @@
 import pytest
-from perses_api.variable import ProjectVariable, GlobalVariable
+
 from perses_api.model import APIModel, Metadata, VariableSpec
 from perses_api.model import Variable as VariableModel
+from perses_api.variable import GlobalVariable, ProjectVariable
 
 
 @pytest.fixture
